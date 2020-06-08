@@ -275,7 +275,7 @@ class SimilarLengthSampler(Sampler):
         all_idxs = list(range(len(data_source)))
         all_lens = [self.get_length(idx) for idx in all_idxs]
         self.all_index = self.sort_and_batching(all_idxs, all_lens, batch_size)
-        super(SimilarLengthSampler, self).__init__()
+        super(SimilarLengthSampler, self).__init__(data_source)
 
     def sort_and_batching(self, all_idxs, all_lens, batch_size):
         sorted_idxs = sorted(zip(all_idxs, all_lens), key=lambda x: x[1], reverse=True)

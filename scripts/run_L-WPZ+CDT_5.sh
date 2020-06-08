@@ -2,7 +2,7 @@
 echo usage: pass gpu id list as param, split with ,
 echo eg: source run_main.sh 3 snips OR source run_main.sh 3 ner
 
-echo log file path ../result/
+echo log file path ../result_new/
 
 
 gpu_list=$1
@@ -15,12 +15,12 @@ do_debug=
 dataset_lst=($2)
 #dataset_lst=(sf)
 #dataset_lst=(sf ner)
-support_shots_lst=(1)  # 1-shot
+support_shots_lst=(5)
 data_batch_size=20
 word_piece_data=True
 
 
-# Cross evaluation's data
+# Cross evaluation's data e
 #cross_data_id_lst=(1)  # for debug
 cross_data_id_lst=(1 2 3 4 5 6 7)  # for snips
 #cross_data_id_lst=(1 2 3 4)  # for ner
@@ -43,14 +43,14 @@ upper_lr_lst=(0.001)
 fix_embd_epoch_lst=(-1)
 #fix_embd_epoch_lst=(1 2)
 
-#warmup_epoch=-1
-warmup_epoch=1
+#warmup_epoch=2
+warmup_epoch=-1
 
 
 train_batch_size_lst=(4)
 test_batch_size=4
-grad_acc=2
-#grad_acc=4  # if the GPU-memory is not enough, use bigger gradient accumulate
+#grad_acc=2
+grad_acc=4  # if the GPU-memory is not enough, use bigger gradient accumulate
 epoch=4
 
 # ==== model setting =========
@@ -60,8 +60,8 @@ embedder=bert
 #embedder=sep_bert
 
 #emission_lst=(mnet)
-emission_lst=(tapnet)
-#emission_lst=(proto_with_label)
+#emission_lst=(tapnet)
+emission_lst=(proto_with_label)
 #emission_lst=(proto)
 #emission_lst=(mnet proto)
 
@@ -80,11 +80,13 @@ emission_scaler=learn
 do_div_emission=-dbt
 #do_div_emission=
 
-#use_schema=--use_schema
-use_schema=
+use_schema=--use_schema
+#use_schema=
 
 ems_scale_rate_lst=(0.01)
 #ems_scale_rate_lst=(0.01 0.02 0.05 0.005)
+
+use_schema=--use_schema
 
 label_reps=sep
 #label_reps=cat
@@ -96,18 +98,15 @@ ple_scale_r=0.5
 #ple_scale_r=0.01
 
 tap_random_init=--tap_random_init
-tap_random_init_r=1
+tap_random_init_r=0.5
 tap_mlp=
 emb_log=
 
 # ------ decoder setting -------
 #decoder_lst=(rule)
-decoder_lst=(sms)
-#decoder_lst=(crf)
+#decoder_lst=(sms)
+decoder_lst=(crf)
 #decoder_lst=(crf sms)
-
-transition=learn
-#transition=learn_with_label
 
 #trans_init_lst=(fix rand)
 trans_init_lst=(rand)
@@ -132,19 +131,11 @@ trans_scaler=none
 #trans_scaler=relu
 #trans_scaler=exp
 
-#label_trans_scaler=none
-#label_trans_scaler=fix
-label_trans_scaler=learn
-
-label_trans_normalizer=none
-#label_trans_normalizer=softmax
-#label_trans_normalizer=norm
-
 
 # ======= default path (for quick distribution) ==========
 bert_base_uncased=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/
 bert_base_uncased_vocab=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/vocab.txt
-base_data_dir=/users4/yklai/code/Dialogue/FewShot/release/baseline+pw_data/ # acl20 data
+base_data_dir=/users4/yklai/code/Dialogue/FewShot/release/label_proto_data/ # acl20 data
 
 
 echo [START] set jobs on dataset [ ${dataset_lst[@]} ] on gpu [ ${gpu_list} ]
@@ -178,14 +169,15 @@ do
                                                     for cross_data_id in ${cross_data_id_lst[@]}
                                                     do
                                                         # model names
-                                                        model_name=Tapnet.dec_${decoder}.enc_${embedder}.ems_${emission}.random_${tap_random_init_r}.proto_${tap_proto_r}.lb_${label_reps}_scl_${ple_scaler}${ple_scale_r}.trans_${transition}.t_scl_${trans_scaler}${trans_scale_r}_${trans_normalizer}.t_i_${trans_init}.${mask_trans}_.sim_${similarity}.lr_${lr}.up_lr_${upper_lr}.bs_${train_batch_size}_${test_batch_size}.sp_b_${grad_acc}.w_ep_${warmup_epoch}.ep_${epoch}${do_debug}
+                                                        model_name=L-WPZ-CDT.dec_${decoder}.enc_${embedder}.ems_${emission}${do_div_emission}.mlp_${tap_mlp}.e_scl_${emission_scaler}${ems_scale_r}_${emission_normalizer}.lb_${label_reps}_scl_${ple_scaler}${ple_scale_r}.t_scl_${trans_scaler}${trans_scale_r}_${trans_normalizer}.t_i_${trans_init}.${mask_trans}_.sim_${similarity}.lr_${lr}.up_lr_${upper_lr}.bs_${train_batch_size}_${test_batch_size}.sp_b_${grad_acc}.w_ep_${warmup_epoch}.ep_${epoch}${do_debug}
 
-                                                        data_dir=${base_data_dir}xval_${dataset}/
+                                                        data_dir=${base_data_dir}xval_${dataset}_shot_${support_shots}/
                                                         file_mark=${dataset}.shots_${support_shots}.cross_id_${cross_data_id}.m_seed_${seed}
-                                                        train_file_name=${dataset}_train_${cross_data_id}.json
-                                                        dev_file_name=${dataset}_valid_${cross_data_id}.json
-                                                        test_file_name=${dataset}_test_${cross_data_id}.json
+                                                        train_file_name=${dataset}-train-${cross_data_id}-shot-${support_shots}.json
+                                                        dev_file_name=${dataset}-valid-${cross_data_id}-shot-${support_shots}.json
+                                                        test_file_name=${dataset}-test-${cross_data_id}-shot-${support_shots}.json
                                                         trained_model_path=${data_dir}${model_name}.DATA.${file_mark}/model.path
+
 
                                                         echo [CLI]
                                                         echo Model: ${model_name}
@@ -232,15 +224,12 @@ do
                                                             ${emb_log} \
                                                             ${do_div_emission} \
                                                             --decoder ${decoder} \
-                                                            --transition ${transition} \
+                                                            --transition learn \
                                                             --backoff_init ${trans_init} \
                                                             --trans_r ${trans_rate} \
                                                             -t_nm ${trans_normalizer} \
                                                             -t_scl ${trans_scaler} \
                                                             --trans_scale_r ${trans_scale_r} \
-                                                            -lt_scl ${label_trans_scaler} \
-                                                            --label_trans_scale_r ${trans_scale_r} \
-                                                            -lt_nm ${label_trans_normalizer} \
                                                             ${mask_trans} \
                                                             --load_feature > ../result/${model_name}.DATA.${file_mark}.log
                                                         echo [CLI]

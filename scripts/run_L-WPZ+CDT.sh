@@ -15,13 +15,13 @@ do_debug=
 dataset_lst=($2)
 #dataset_lst=(sf)
 #dataset_lst=(sf ner)
-support_shots_lst=(1 5)
+support_shots_lst=(1)
 data_batch_size=20
 word_piece_data=True
 
 
 # Cross evaluation's data e
-#cross_data_id_lst=(2)  # for debug
+#cross_data_id_lst=(1)  # for debug
 cross_data_id_lst=(1 2 3 4 5 6 7)  # for snips
 #cross_data_id_lst=(1 2 3 4)  # for ner
 
@@ -135,7 +135,7 @@ trans_scaler=none
 # ======= default path (for quick distribution) ==========
 bert_base_uncased=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/
 bert_base_uncased_vocab=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/vocab.txt
-base_data_dir=/users4/yklai/code/Dialogue/FewShot/Addition/label_proto_data/ # acl20 data
+base_data_dir=/users4/yklai/code/Dialogue/FewShot/release/label_proto_data/ # acl20 data
 
 
 echo [START] set jobs on dataset [ ${dataset_lst[@]} ] on gpu [ ${gpu_list} ]
@@ -230,7 +230,7 @@ do
                                                             -t_scl ${trans_scaler} \
                                                             --trans_scale_r ${trans_scale_r} \
                                                             ${mask_trans} \
-                                                            --load_feature > ../result/multi_seed/${model_name}.DATA.${file_mark}.log
+                                                            --load_feature > ../result/${model_name}.DATA.${file_mark}.log
                                                         echo [CLI]
                                                         echo Model: ${model_name}
                                                         echo Task:  ${file_mark}

@@ -15,7 +15,7 @@ do_debug=
 dataset_lst=($2)
 #dataset_lst=(sf)
 #dataset_lst=(sf ner)
-support_shots_lst=(1 5)  # 1-shot & 5-shot
+support_shots_lst=(1)  # 1-shot
 data_batch_size=20
 word_piece_data=True
 
@@ -133,7 +133,7 @@ transition=learn
 # ======= default path (for quick distribution) ==========
 bert_base_uncased=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/
 bert_base_uncased_vocab=/users4/yklai/corpus/BERT/pytorch/uncased_L-12_H-768_A-12/vocab.txt
-base_data_dir=/users4/yklai/code/Dialogue/FewShot/Addition/best_data/ # acl20 data
+base_data_dir=/users4/yklai/code/Dialogue/FewShot/release/best_data/ # acl20 data
 
 
 echo [START] set jobs on dataset [ ${dataset_lst[@]} ] on gpu [ ${gpu_list} ]

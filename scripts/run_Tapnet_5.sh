@@ -15,7 +15,7 @@ do_debug=
 dataset_lst=($2)
 #dataset_lst=(sf)
 #dataset_lst=(sf ner)
-support_shots_lst=(1)  # 1-shot
+support_shots_lst=(5)  # 5-shot
 data_batch_size=20
 word_piece_data=True
 
@@ -49,8 +49,8 @@ warmup_epoch=1
 
 train_batch_size_lst=(4)
 test_batch_size=4
-grad_acc=2
-#grad_acc=4  # if the GPU-memory is not enough, use bigger gradient accumulate
+#grad_acc=2
+grad_acc=4  # if the GPU-memory is not enough, use bigger gradient accumulate
 epoch=4
 
 # ==== model setting =========
@@ -180,11 +180,11 @@ do
                                                         # model names
                                                         model_name=Tapnet.dec_${decoder}.enc_${embedder}.ems_${emission}.random_${tap_random_init_r}.proto_${tap_proto_r}.lb_${label_reps}_scl_${ple_scaler}${ple_scale_r}.trans_${transition}.t_scl_${trans_scaler}${trans_scale_r}_${trans_normalizer}.t_i_${trans_init}.${mask_trans}_.sim_${similarity}.lr_${lr}.up_lr_${upper_lr}.bs_${train_batch_size}_${test_batch_size}.sp_b_${grad_acc}.w_ep_${warmup_epoch}.ep_${epoch}${do_debug}
 
-                                                        data_dir=${base_data_dir}xval_${dataset}/
+                                                        data_dir=${base_data_dir}xval_${dataset}_shot_${support_shots}/
                                                         file_mark=${dataset}.shots_${support_shots}.cross_id_${cross_data_id}.m_seed_${seed}
-                                                        train_file_name=${dataset}_train_${cross_data_id}.json
-                                                        dev_file_name=${dataset}_valid_${cross_data_id}.json
-                                                        test_file_name=${dataset}_test_${cross_data_id}.json
+                                                        train_file_name=${dataset}-train-${cross_data_id}-shot-${support_shots}.json
+                                                        dev_file_name=${dataset}-valid-${cross_data_id}-shot-${support_shots}.json
+                                                        test_file_name=${dataset}-test-${cross_data_id}-shot-${support_shots}.json
                                                         trained_model_path=${data_dir}${model_name}.DATA.${file_mark}/model.path
 
                                                         echo [CLI]
