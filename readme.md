@@ -1,5 +1,6 @@
 # Few-shot Slot Tagging
-Code usage and other instructions.
+
+This is the code of the ACL 2020 paper: [Few-shot Slot Tagging with Collapsed Dependency Transfer and Label-enhanced Task-adaptive Projection Network](https://atmahou.github.io/attachments/atma's_acl2020_FewShot.pdf).
 
 ## Get Started
 
@@ -42,42 +43,46 @@ source ./scripts/run_main.sh 1,2 snips
 ### Scripts For Main Model
 
 We provide scripts of four main models: 
-- Tap-Net,
+- Tap-Net
 - Tap-Net + CDT
 - L-WPZ + CDT
 - L-Tap-Net + CDT 
 
 , which are in the folder named `scripts` 
 
-> Notice: you should change the BERT PATH and the DATA PATH in scripts
+> Notice: you should change the `BERT PATH` and the `DATA PATH` in scripts
 
 
 ## Project Architecture
 
 ### overview
 
-```
 - FewShotTagging
     - `models`: the neural network architectures
     - `scripts`: training scripts for main models
     - `utils`: some tools for Assisting training
     - `main.py`: the entry file of the whole project
-```
 
 ### `models`
 
+- Modules
+    - Embedder Module
+    - Emission Module
+    - Transition Module
+    - Scale Module 
+
 In `models` folder, there is a model file named `few_shot_seq_labeler.py`, which combines all components of Model Architecture,
-include Embedder Module,  Emission Module, Transition Module and so on, which are all in the sub-folder named `fewshot_seqlabel`.
+include **Embedder Module**,  **Emission Module**, **Transition Module** and so on, which are all in the sub-folder named `fewshot_seqlabel`.
 
 As mentioned before, there are three main modules in our model.
-1. The Embedder Module is implemented in `context_embedder_base.py`;
-2. The Emission Module is implemented in `emission_scorer_base.py`, because of the metric-based method, the most important part of which is the similarity calculation functions implemented in `similarity_scorer_base.py`;
-3. The Transition Module is implemented in `transition_scorer.py`;
+1. The **Embedder Module** is implemented in `context_embedder_base.py`;
+2. The **Emission Module** is implemented in `emission_scorer_base.py`, because of the metric-based method, the most important part of which is the similarity calculation functions implemented in `similarity_scorer_base.py`;
+3. The **Transition Module** is implemented in `transition_scorer.py`;
 
-The Emission Module and Transition Module consist the CRF Module implemented in `conditional_random_field.py`, which is decoded by Viterbi Algorithm.
-When not using Transition Module, we just decode the emission score directly implemented in `seq_labeler.py`.
+The **Emission Module** and **Transition Module** consist the **CRF Module** implemented in `conditional_random_field.py`, which is decoded by _Viterbi Algorithm_.
+When not using **Transition Module**, we just decode the emission score directly implemented in `seq_labeler.py`.
 
-When we combine the Emission Module and Transition Module, we implement a Scale Module implemented in `scale_controller.py` for better training.
+When we combine the **Emission Module** and **Transition Module**, we implement a **Scale Module** implemented in `scale_controller.py` for better training.
 
 
 ### `utils`
