@@ -10,11 +10,11 @@ python >= 3.6
 pytorch >= 0.4.1
 pytorch_pretrained_bert >= 0.6.1
 allennlp >= 0.8.2
+torchnlp
 ```
 
-### Prepare pre-trained embedding:
-#### BERT
-Down the pytorch bert model, or convert tensorflow param yourself as follow:
+### Step1: Prepare BERT embedding:
+- Download the pytorch bert model, or convert tensorflow param by yourself as follow:
 ```bash
 export BERT_BASE_DIR=/users4/ythou/Projects/Resources/bert-base-uncased/uncased_L-12_H-768_A-12/
 
@@ -23,78 +23,82 @@ pytorch_pretrained_bert convert_tf_checkpoint_to_pytorch
   $BERT_BASE_DIR/bert_config.json
   $BERT_BASE_DIR/pytorch_model.bin
 ```
-Set BERT path in the ./utils/config.py
-
-### Prepare data
-Original data is available by contacting me, or you can generate it:
-Set test, train, dev data file path in ./scripts/
-
-### Train and test the main model
-Run command line:
+- Set BERT path in the file `./scripts/run_L-Tapnet+CDT.sh` to your setting:
 ```bash
-source ./scripts/run_main.sh [gpu id split with ','] [data set name]
+bert_base_uncased=/your_dir/uncased_L-12_H-768_A-12/
+bert_base_uncased_vocab=/your_dir/uncased_L-12_H-768_A-12/vocab.txt
 ```
 
-Example:
+
+### Step2: Prepare data
+- Download few-shot data at [my homepage](https://atmahou.github.io/) or click here: [download](https://atmahou.github.io/attachments/ACL2020data.zip)
+
+- Set test, train, dev data file path in `./scripts/run_L-Tapnet+CDT.sh` to your setting.
+  
+> For simplicity, your only need to set the root path for data as follow:
 ```bash
-source ./scripts/run_main.sh 1,2 snips
+base_data_dir=/your_dir/ACL2020data/
 ```
 
-### Scripts For Main Model
+### Step3: Train and test the main model
+- Build a folder to collect running log
+```bash
+mkdir result
+```
 
-We provide scripts of four main models: 
+- Execute cross-evaluation script with two params: -[gpu id] -[dataset name]
+
+##### Example for 1-shot Snips:
+```bash
+source ./scripts/run_L-Tapnet+CDT.sh 0 snips
+```  
+##### Example for 1-shot NER:
+```bash
+source ./scripts/run_L-Tapnet+CDT.sh 0 ner
+```
+
+> To run 5-shots experiments, use `./scripts/run_L-Tapnet+CDT_5.sh`
+
+## Model for Other Setting
+
+We also provide scripts of four model settings as follows: 
 - Tap-Net
 - Tap-Net + CDT
 - L-WPZ + CDT
 - L-Tap-Net + CDT 
-
-, which are in the folder named `scripts` 
-
-> Notice: you should change the `BERT PATH` and the `DATA PATH` in scripts
+> You can find their corresponding scripts in `./scripts/` with the same usage as above.
 
 
 ## Project Architecture
 
-### overview
-
-- FewShotTagging
+### `Root`
+- the project contains three main parts:
     - `models`: the neural network architectures
-    - `scripts`: training scripts for main models
-    - `utils`: some tools for Assisting training
+    - `scripts`: running scripts for cross evaluation
+    - `utils`: auxiliary or tool function files
     - `main.py`: the entry file of the whole project
 
 ### `models`
-
+- Main Model  
+    - Sequence Labeler (`few_shot_seq_labeler.py`): a framework that integrates modules below to perform sequence labeling.
 - Modules
-    - Embedder Module
-    - Emission Module
-    - Transition Module
-    - Scale Module 
-
-In `models` folder, there is a model file named `few_shot_seq_labeler.py`, which combines all components of Model Architecture,
-include **Embedder Module**,  **Emission Module**, **Transition Module** and so on, which are all in the sub-folder named `fewshot_seqlabel`.
-
-As mentioned before, there are three main modules in our model.
-1. The **Embedder Module** is implemented in `context_embedder_base.py`;
-2. The **Emission Module** is implemented in `emission_scorer_base.py`, because of the metric-based method, the most important part of which is the similarity calculation functions implemented in `similarity_scorer_base.py`;
-3. The **Transition Module** is implemented in `transition_scorer.py`;
-
-The **Emission Module** and **Transition Module** consist the **CRF Module** implemented in `conditional_random_field.py`, which is decoded by _Viterbi Algorithm_.
-When not using **Transition Module**, we just decode the emission score directly implemented in `seq_labeler.py`.
-
-When we combine the **Emission Module** and **Transition Module**, we implement a **Scale Module** implemented in `scale_controller.py` for better training.
-
+    - Embedder Module (`context_embedder_base.py`): modules that provide embeddings.
+    - Emission Module (`emission_scorer_base.py`): modules that compute emission scores. 
+    - Transition Module (`transition_scorer.py`): modules that compute transition scores.
+    - Similarity Module (`transition_scorer.py`): modules that compute similarities for metric learning based emission scorer.
+    - Output Module (`seq_labeler.py`): output layer with normal mlp or crf.
+    - Scale Module (`scale_controller.py`): a toolkit for re-scale and normalize logits.
 
 ### `utils`
 
-In `utils` folder, there are some assistance modules for 
-- data processing(`data_helper.py`, `preprocessor.py`), 
-- constructing model architecture(`model_helper,py`), 
-- controlling training process(`trainer,py`), 
-- controlling testing process(`tester,py`), 
-- controllable parameters definition(`opt.py`), 
-- controllable device definition(`device_helper`) 
-- and config(`config.py`).
+- `utils` contains assistance modules for:
+    - data processing (`data_helper.py`, `preprocessor.py`), 
+    - constructing model architecture (`model_helper.py`), 
+    - controlling training process (`trainer.py`), 
+    - controlling testing process (`tester.py`), 
+    - controllable parameters definition (`opt.py`), 
+    - device definition (`device_helper`) 
+    - config (`config.py`).
 
 
 
