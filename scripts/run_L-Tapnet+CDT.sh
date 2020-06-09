@@ -95,6 +95,8 @@ ple_scale_r=0.5
 
 tap_random_init=--tap_random_init
 tap_random_init_r=0.5
+tap_proto=--tap_proto
+tap_proto_r=0.3
 tap_mlp=
 emb_log=
 
@@ -218,6 +220,8 @@ do
                                                             --ple_scale_r ${ple_scale_r} \
                                                             ${tap_random_init} \
                                                             --tap_random_init_r ${tap_random_init_r} \
+                                                            --tap_proto ${tap_proto} \
+                                                            --tap_proto_r ${tap_proto_r} \
                                                             ${tap_mlp} \
                                                             ${emb_log} \
                                                             ${do_div_emission} \

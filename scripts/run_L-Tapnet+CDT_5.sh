@@ -95,6 +95,8 @@ ple_scale_r=0.5
 
 tap_random_init=--tap_random_init
 tap_random_init_r=0.5
+tap_proto=--tap_proto
+tap_proto_r=0.3
 tap_mlp=
 emb_log=
 
@@ -103,6 +105,9 @@ emb_log=
 #decoder_lst=(sms)
 decoder_lst=(crf)
 #decoder_lst=(crf sms)
+
+transition=learn
+#transition=learn_with_label
 
 #trans_init_lst=(fix rand)
 trans_init_lst=(rand)
@@ -127,7 +132,13 @@ trans_scaler=none
 #trans_scaler=relu
 #trans_scaler=exp
 
-transition=learn
+#label_trans_scaler=none
+#label_trans_scaler=fix
+label_trans_scaler=learn
+
+label_trans_normalizer=none
+#label_trans_normalizer=softmax
+#label_trans_normalizer=norm
 
 
 # ======= default path (for quick distribution) ==========
@@ -176,7 +187,6 @@ do
                                                         test_file_name=${dataset}-test-${cross_data_id}-shot-${support_shots}.json
                                                         trained_model_path=${data_dir}${model_name}.DATA.${file_mark}/model.path
 
-
                                                         echo [CLI]
                                                         echo Model: ${model_name}
                                                         echo Task:  ${file_mark}
@@ -219,6 +229,8 @@ do
                                                             --ple_scale_r ${ple_scale_r} \
                                                             ${tap_random_init} \
                                                             --tap_random_init_r ${tap_random_init_r} \
+                                                            --tap_proto ${tap_proto} \
+                                                            --tap_proto_r ${tap_proto_r} \
                                                             ${tap_mlp} \
                                                             ${emb_log} \
                                                             ${do_div_emission} \
@@ -229,6 +241,9 @@ do
                                                             -t_nm ${trans_normalizer} \
                                                             -t_scl ${trans_scaler} \
                                                             --trans_scale_r ${trans_scale_r} \
+                                                            -lt_scl ${label_trans_scaler} \
+                                                            --label_trans_scale_r ${trans_scale_r} \
+                                                            -lt_nm ${label_trans_normalizer} \
                                                             ${mask_trans} \
                                                             --load_feature > ../result/${model_name}.DATA.${file_mark}.log
                                                         echo [CLI]
