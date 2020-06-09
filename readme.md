@@ -86,7 +86,7 @@ We also provide scripts of four model settings as follows:
     - Emission Module (`emission_scorer_base.py`): modules that compute emission scores. 
     - Transition Module (`transition_scorer.py`): modules that compute transition scores.
     - Similarity Module (`transition_scorer.py`): modules that compute similarities for metric learning based emission scorer.
-    - Output Module (`seq_labeler.py`): output layer with normal mlp or crf.
+    - Output Module (`seq_labeler.py`, `conditional_random_field.py`): output layer with normal mlp or crf.
     - Scale Module (`scale_controller.py`): a toolkit for re-scale and normalize logits.
 
 ### `utils`
