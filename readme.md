@@ -10,7 +10,7 @@ python >= 3.6
 pytorch >= 0.4.1
 pytorch_pretrained_bert >= 0.6.1
 allennlp >= 0.8.2
-torchnlp
+pytorch-nlp
 ```
 
 ### Step1: Prepare BERT embedding:
