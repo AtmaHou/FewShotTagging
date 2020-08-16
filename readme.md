@@ -2,6 +2,14 @@
 
 This is the code of the ACL 2020 paper: [Few-shot Slot Tagging with Collapsed Dependency Transfer and Label-enhanced Task-adaptive Projection Network](https://atmahou.github.io/attachments/atma's_acl2020_FewShot.pdf).
 
+## Notice: Better implementation availiable now!
+
+- A new and powerfull platform is now availiable for general few-shot learning problems!!
+
+- It fully support current experiments with better interface and flexibility~ (E.g. supoort newer [huggingface/transformers](https://github.com/huggingface/transformers))
+
+Try it at: https://github.com/AtmaHou/MetaDialog
+
 ## Get Started
 
 ### Requirement
