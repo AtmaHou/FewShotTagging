@@ -41,6 +41,8 @@ bert_base_uncased_vocab=/your_dir/uncased_L-12_H-768_A-12/vocab.txt
 ### Step2: Prepare data
 - Download few-shot data at [my homepage](https://atmahou.github.io/) or click here: [download](https://atmahou.github.io/attachments/ACL2020data.zip)
 
+> Tips: The numbers in file name denote cross-evaluation id, you can run a complete experiment by only using data of id=1.
+
 - Set test, train, dev data file path in `./scripts/run_L-Tapnet+CDT.sh` to your setting.
   
 > For simplicity, your only need to set the root path for data as follow:
