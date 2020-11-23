@@ -3,19 +3,6 @@
 This is the code of the ACL 2020 paper: [Few-shot Slot Tagging with Collapsed Dependency Transfer and Label-enhanced Task-adaptive Projection Network](https://atmahou.github.io/attachments/atma's_acl2020_FewShot.pdf).
 
 
-## Notice: The New Branch `fix_TapNet_svd_issue`
-Thanks for [Wangpeiyi9979](https://github.com/Wangpeiyi9979) to point out the problem of the base vector selection in our implementation of TapNet in the [issue](https://github.com/AtmaHou/FewShotTagging/issues/20). 
-
-To Correct the problem we create a new branch named `fix_TapNet_svd_issue`.
-
-**The detail of the problem**
-
-The code of TapNet use the library named `cupy.linalg.svd` to get the project space which is composed of the base vector of v. 
-The formula of `cupy.linalg.svd` is `U x diag(S) x V = svd(A)` , and return `U`, `S` and `V`. The base vector should selected from the rows of Matrix `V`.
-
-But in `torch.svd`, the formula is `U x diag(S) x V^T = svd(A)`, adn return `U`, `S` and `V`. The base vector should selected from the columns of Matrix `V`.
-
-
 ## Notice: Better implementation availiable now!
 
 - A new and powerfull platform is now availiable for general few-shot learning problems!!
@@ -124,6 +111,11 @@ We also provide scripts of four model settings as follows:
     - device definition (`device_helper`) 
     - config (`config.py`).
 
+
+## Updates - New branch: `fix_TapNet_svd_issue`
+Thanks [Wangpeiyi9979](https://github.com/Wangpeiyi9979) for pointing out the problem of TapNet implementation ([issue](https://github.com/AtmaHou/FewShotTagging/issues/20)), which is caused by port differences of `cupy.linalg.svd` and `svd() in pytorch`. 
+
+The corrected codes is included in new branch named `fix_TapNet_svd_issue`, because we found correctness of TapNet will slightly degrade performance (still the best).
 
 
 
