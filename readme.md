@@ -115,7 +115,7 @@ We also provide scripts of four model settings as follows:
 ## Updates - New branch: `fix_TapNet_svd_issue`
 Thanks [Wangpeiyi9979](https://github.com/Wangpeiyi9979) for pointing out the problem of TapNet implementation ([issue](https://github.com/AtmaHou/FewShotTagging/issues/20)), which is caused by port differences of `cupy.linalg.svd` and `svd() in pytorch`. 
 
-The corrected codes is included in new branch named `fix_TapNet_svd_issue`, because we found correctness of TapNet will slightly degrade performance (still the best).
+The corrected codes is included in new branch named `fix_TapNet_svd_issue`, because we found correction of TapNet will slightly degrade performance (still the best).
 
 
 
