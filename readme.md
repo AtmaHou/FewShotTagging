@@ -119,3 +119,6 @@ The corrected codes are included in new branch named `fix_TapNet_svd_issue`, bec
 
 
 
+## Liciense for code and data
+Apache License 2.0
+
